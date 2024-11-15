@@ -4,12 +4,19 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    private MazeGenerate mazeGenerate;
+
     enum blocks { NONE = -1, WALL = 0, FLOOR, DOOR, INTERACTIVE }
 
     List<List<int>> maze;
 
+    private void Awake()
+    {
+        mazeGenerate = new MazeGenerate();
+    }
+
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         // 15 x 12 (유효 블럭 최대값들)                                   유효 블럭 수
         maze = new List<List<int>>()
@@ -31,11 +38,11 @@ public class GameManager : MonoBehaviour
             new List<int> { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },       // 12
         };
 
-        MazeGenerate.GenerateMaze(maze);
+        mazeGenerate.GenerateMaze(maze);
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         
     }

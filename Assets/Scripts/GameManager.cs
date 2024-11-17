@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 
     enum blocks { NONE = -1, WALL = 0, FLOOR, DOOR, INTERACTIVE }
 
-    List<List<int>> maze;
+    int[,] maze;
 
     private void Awake()
     {
@@ -18,25 +18,19 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        // 15 x 12 (유효 블럭 최대값들)                                   유효 블럭 수
-        maze = new List<List<int>>()
+        // 12 x 15 (행 x 열)
+        maze = new int[12, 15];
+
+        for (int i = 0; i < 12; i++)
         {
-            new List<int> { -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, -1 -1 },    // 8
-            new List<int> { -1, -1, 0, 1, 1, 1, 1, 1, 1, 1, 0, -1 },    // 9
-            new List<int> { 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, -1 },      // 11
-            new List<int> { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },       // 12
-            new List<int> { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },       // 12
-            new List<int> { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, -1 },      // 11
-            new List<int> { -1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, -1 },     // 10
-            new List<int> { -1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, -1 },     // 10
-            new List<int> { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1 },      // 11
-            new List<int> { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },       // 12
-            new List<int> { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },       // 12
-            new List<int> { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },       // 12
-            new List<int> { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },       // 12
-            new List<int> { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },       // 12
-            new List<int> { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 },       // 12
-        };
+            for (int j = 0; j < 15; j++)
+            {
+                if (i % 2 == 0)
+                    maze[i, j] = 0;
+                else
+                    maze[i, j] = 1;
+            }
+        }
 
         mazeGenerate.GenerateMaze(maze);
     }

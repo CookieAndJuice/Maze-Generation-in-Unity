@@ -4,31 +4,42 @@ using UnityEngine;
 
 public class MazeGenerate
 {
-    public List<List<int>> GenerateMaze (List<List<int>> map)
+    public int[,] GenerateMaze (int[,] map)
     {
-        List<List<int>> maze = new List<List<int>>(map);
+        int[,] maze = (int[,]) map.Clone();
+        int[,] visited = (int[,])map.Clone();
         int[] dx = { -2, 2, 0, 0 };
         int[] dy = { 0, 0, 2, -2 };
-        int[] directionOrder = { 0, 1, 2, 3 };
+        int[] directionOrder = { 0, 1, 2, 3 };      // 탐색 방향 순서
 
-        int mazeWidth = maze[0].Count;
-        int mazeHeight = maze.Count;
+        int mazeWidth = maze.GetLength(1);
+        int mazeHeight = maze.GetLength(0);
         var startPos = (0, 0);
         var endPos = (mazeWidth - 1, mazeHeight - 1);
 
-        var recursiveQueue = new Queue<(int, int)>();
-        recursiveQueue.Enqueue(startPos);
+        var recursiveStack = new Stack<(int, int)>();
+        recursiveStack.Push(startPos);
+        visited[startPos.Item2, startPos.Item1] = 1;
 
-        while(recursiveQueue.Count != 0)
+        while(recursiveStack.Count != 0)
         {
-            var nowPos = recursiveQueue.Dequeue();
-            ShuffleArray(directionOrder);
+            var nowPos = recursiveStack.Pop();      // 현재 위치
+            Debug.Log(nowPos);
+            ShuffleArray(directionOrder);           // 탐색 방향 순서 섞기
 
             for (int i = 0; i < 4; i++)
             {
                 var visitPos = (nowPos.Item1 + dx[directionOrder[i]], nowPos.Item2 + dy[directionOrder[i]]);
 
-                Debug.Log(visitPos);
+                if (visitPos.Item1 >= 0 && visitPos.Item2 >= 0 && visitPos.Item1 < mazeWidth && visitPos.Item2 < mazeHeight)
+                {
+                    if (visited[visitPos.Item2, visitPos.Item1] == 0)
+                    {
+                        recursiveStack.Push(nowPos);
+                        recursiveStack.Push(visitPos);
+                        visited[visitPos.Item2, visitPos.Item1] = 1;
+                    }
+                }
             }
         }
 

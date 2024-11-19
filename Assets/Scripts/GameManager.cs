@@ -9,8 +9,6 @@ public class GameManager : MonoBehaviour
 
     public static Action<int[,]> mapGenerate;
 
-    enum blocks { NONE = -1, WALL = 0, FLOOR, DOOR, INTERACTIVE }
-
     int[,] maze;
 
     private void Awake()

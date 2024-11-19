@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     private MazeGenerate mazeGenerate;
+
+    public static Action<int[,]> mapGenerate;
 
     enum blocks { NONE = -1, WALL = 0, FLOOR, DOOR, INTERACTIVE }
 
@@ -15,29 +18,60 @@ public class GameManager : MonoBehaviour
         mazeGenerate = new MazeGenerate();
     }
 
-    // Start is called before the first frame update
     private void Start()
     {
-        // 12 x 15 (행 x 열)
-        maze = new int[12, 15];
+        // 15 x 12 (행 x 열) -> C/C++이랑 순서 같음
+        // maze = new int[15, 12];
 
-        for (int i = 0; i < 12; i++)
+        maze = new int[,]
         {
-            for (int j = 0; j < 15; j++)
-            {
-                if (i % 2 == 0)
-                    maze[i, j] = 0;
-                else
-                    maze[i, j] = 1;
-            }
-        }
-
-        mazeGenerate.GenerateMaze(maze);
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1 },
+            { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1 },
+            { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, 0, 0 },
+            { -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, 0, 0 },
+            { -1, -1, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1 },
+            { -1, -1, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1 },
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        };
     }
 
-    // Update is called once per frame
     private void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            InitializeMaze();
+
+            Debug.Log("GenerateMaze!");
+            maze = mazeGenerate.GenerateMaze(maze);
+            mapGenerate(maze);
+        }
+    }
+
+    private void InitializeMaze()
+    {
+        // 직사각형
+        for (int i = 0; i < 15; i++)
+        {
+            for (int j = 0; j < 12; j++)
+            {
+                if (maze[i, j] != -1)
+                {
+                    Debug.Log("좌표");
+                    Debug.Log(maze[i, j]);
+                    if (i % 2 == 0 && j % 2 == 0)
+                        maze[i, j] = 0;
+                    else
+                        maze[i, j] = 1;
+                }
+            }
+        }
     }
 }

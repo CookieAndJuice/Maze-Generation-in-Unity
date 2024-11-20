@@ -33,7 +33,6 @@ public class TileMapGenerate : MonoBehaviour
                 switch (nowPos)
                 {
                     case Blocks.NONE:
-                        Debug.Log("-1이다! 빈공간이다!");
                         break;
                     case Blocks.FLOOR:
                         prefab = Instantiate(prefabList[(int)nowPos], TileMap.transform);

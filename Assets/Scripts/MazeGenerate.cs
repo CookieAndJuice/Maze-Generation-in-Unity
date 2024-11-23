@@ -4,46 +4,45 @@ using UnityEngine;
 
 public class MazeGenerate
 {
-    public int[,] GenerateMaze (int[,] map)
+    public int[,] GenerateMaze (int[,] map, (int, int)[] doors)
     {
         int[,] maze = (int[,]) map.Clone();
         int[,] visited = (int[,])map.Clone();
         int[] dx = { -1, 1, 0, 0 };
         int[] dy = { 0, 0, 1, -1 };
-        int[] directionOrder = { 0, 1, 2, 3 };      // Å½»ö ¹æÇâ ¼ø¼­
+        int[] directionOrder = { 0, 1, 2, 3 };      // íƒìƒ‰ ë°©í–¥ ìˆœì„œ
 
-        // ¹Ì·Î °¡·Î, ¼¼·Î ±æÀÌ
+        // ë¯¸ë¡œ ê°€ë¡œ, ì„¸ë¡œ ê¸¸ì´
         int mazeWidth = maze.GetLength(1);
         int mazeHeight = maze.GetLength(0);
 
-        // ½ÃÀÛÁ¡, ³¡Á¡
+        // ì‹œì‘ì 
         var startPos = (0, 0);
-        var endPos = (mazeWidth - 1, mazeHeight - 1);
 
-        // ÁÂÇ¥ ÀÓ½Ã ÀúÀåÇÒ º¯¼öµé
+        // ì¢Œí‘œ ì„ì‹œ ì €ì¥í•  ë³€ìˆ˜ë“¤
         var nowPos = (0, 0);
         var stackTopPos = (0, 0);
 
-        // DFS ½ºÅÃ
+        // DFS ìŠ¤íƒ
         var recursiveStack = new Stack<(int, int)>();
         recursiveStack.Push(startPos);
         visited[startPos.Item2, startPos.Item1] = 1;
 
         while(recursiveStack.Count != 0)
         {
-            nowPos = recursiveStack.Pop();      // ÇöÀç À§Ä¡
+            nowPos = recursiveStack.Pop();      // í˜„ì¬ ìœ„ì¹˜
             visited[nowPos.Item2, nowPos.Item1] = 1;
             
-            ShuffleArray(directionOrder);           // Å½»ö ¹æÇâ ¼ø¼­ ¼¯±â
+            ShuffleArray(directionOrder);           // íƒìƒ‰ ë°©í–¥ ìˆœì„œ ì„ê¸°
 
             for (int i = 0; i < 4; i++)
             {
                 var visitPos = (nowPos.Item1 + dx[directionOrder[i]]*2, nowPos.Item2 + dy[directionOrder[i]]*2);
 
-                // ¸Ê ¹üÀ§ ³»¿¡ ÀÖ´ÂÁö È®ÀÎ
+                // ë§µ ë²”ìœ„ ë‚´ì— ìˆëŠ”ì§€ í™•ì¸
                 if (visitPos.Item1 >= 0 && visitPos.Item2 >= 0 && visitPos.Item1 < mazeWidth && visitPos.Item2 < mazeHeight)
                 {
-                    // ¹æ¹® ¿©ºÎ È®ÀÎ
+                    // ë°©ë¬¸ ì—¬ë¶€ í™•ì¸
                     if (visited[visitPos.Item2, visitPos.Item1] == 0)
                     {
                         recursiveStack.Push(nowPos);
@@ -53,7 +52,7 @@ public class MazeGenerate
                 }
             }
 
-            // ¹æ¹® ¿¹Á¤ ½ºÅÃ¿¡ »õ·Î Ãß°¡ÇÑ °ÍÀÌ ¾Æ´Ï¶ó ÀÌÀü¿¡ ¹æ¹®Çß´ø ºí·°ÀÌ ÀÖ´Ù¸é Åë·Î ¸¸µé¾îÁÖ±â
+            // ë°©ë¬¸ ì˜ˆì • ìŠ¤íƒì— ìƒˆë¡œ ì¶”ê°€í•œ ê²ƒì´ ì•„ë‹ˆë¼ ì´ì „ì— ë°©ë¬¸í–ˆë˜ ë¸”ëŸ­ì´ ìˆë‹¤ë©´ í†µë¡œ ë§Œë“¤ì–´ì£¼ê¸°
             if (recursiveStack.Count != 0)
             {
                 stackTopPos = recursiveStack.Peek();
@@ -65,10 +64,21 @@ public class MazeGenerate
                 }
             }
         }
+        
+        // ê° ë¬¸ìœ¼ë¡œ í–¥í•˜ëŠ” ë¶€ë¶„ ê¸¸ ëš«ì–´ì£¼ê¸°
+        foreach (var doorPos in doors)
+        {
+            if ((mazeWidth % 2 == 0 || mazeHeight % 2 == 0) && maze[doorPos.Item2, doorPos.Item1] == 1)
+            {
+                var visitPos = (0, 0);
+                maze[doorPos.Item2, doorPos.Item1] = 0;
 
-        // ¹®À¸·Î ÇâÇÏ´Â ºÎºĞ ±æ ¶Õ¾îÁÖ±â
-        if (maze[endPos.Item2, endPos.Item1] == 1)
-            maze[endPos.Item2, endPos.Item1] = 0;
+                if (doorPos.Item1 == (mazeWidth - 1))
+                    visitPos = (doorPos.Item1 + dx[directionOrder[0]], doorPos.Item2);
+                else if (doorPos.Item2 == (mazeHeight - 1))
+                    visitPos = (doorPos.Item1, doorPos.Item2 + dy[directionOrder[2]]);
+            }
+        }
 
         return maze;
     }

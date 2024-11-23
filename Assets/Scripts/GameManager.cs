@@ -10,39 +10,45 @@ public class GameManager : MonoBehaviour
     public static Action<int[,]> mapGenerate;
 
     int[,] maze;
+    (int, int)[] doors;
     int mazeWidth;
     int mazeHeight;
 
     private void Awake()
     {
         mazeGenerate = new MazeGenerate();
-        mazeWidth = 12;
-        mazeHeight = 15;
+        mazeWidth = 14;
+        mazeHeight = 12;
     }
 
     private void Start()
     {
-        // 15 x 12 («‡ x ø≠) -> C/C++¿Ã∂˚ º¯º≠ ∞∞¿Ω
-        // maze = new int[mazeHeight, mazeWidth];
+        // 15 x 12 (Ìñâ x Ïó¥) -> C/C++Ïù¥Îûë ÏàúÏÑú Í∞ôÏùå
+        maze = new int[mazeHeight, mazeWidth];
 
-        maze = new int[,]
-        {
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1 },
-            { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1 },
-            { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, 0, 0 },
-            { -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, 0, 0 },
-            { -1, -1, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1 },
-            { -1, -1, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-        };
+        //maze = new int[,]
+        //{
+        //    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1 },
+        //    { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1 },
+        //    { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        //    { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        //    { -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        //    { -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        //    { -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        //    { -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        //    { -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, 0, 0 },
+        //    { -1, -1, -1, 0, 0, 0, 0, 0, -1, -1, 0, 0 },
+        //    { -1, -1, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1 },
+        //    { -1, -1, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1 },
+        //    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        //    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        //    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        //};
+
+        doors = new (int, int)[3];
+        doors[0] = (5, 0);
+        doors[1] = (mazeWidth - 1, 9);
+        doors[2] = (5, mazeHeight - 1);
     }
 
     private void Update()
@@ -52,20 +58,21 @@ public class GameManager : MonoBehaviour
             InitializeMaze();
 
             Debug.Log("GenerateMaze!");
-            maze = mazeGenerate.GenerateMaze(maze);
+            maze = mazeGenerate.GenerateMaze(maze, doors);
             mapGenerate(maze);
         }
     }
 
     private void InitializeMaze()
     {
-        // ¡˜ªÁ∞¢«¸
+        // ÏßÅÏÇ¨Í∞ÅÌòï
         for (int i = 0; i < mazeHeight; i++)
         {
             for (int j = 0; j < mazeWidth; j++)
             {
                 if (maze[i, j] != -1)
                 {
+                    // ÌñâÍ≥º Ïó¥ÎßàÎã§ ÌôÄÏàò Ïù∏Îç±Ïä§ Ïπ∏Îßå Î≤ΩÏúºÎ°ú Î≥ÄÍ≤Ω
                     if (i % 2 == 0 && j % 2 == 0)
                         maze[i, j] = 0;
                     else
